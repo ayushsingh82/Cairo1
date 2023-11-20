@@ -1,14 +1,10 @@
 // arrays3.cairo
-// Make me compile and pass the test!
-// Execute `starklings hint arrays3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
 
 use array::ArrayTrait;
 use option::OptionTrait;
 
 fn create_array() -> Array<felt252> {
-    let a = ArrayTrait::new(); // something to change here...
+    let mut a = ArrayTrait::new(); // Change here to use mut
     a.append(0);
     a.append(1);
     a.append(2);
@@ -16,11 +12,9 @@ fn create_array() -> Array<felt252> {
     a
 }
 
-
 #[test]
 fn test_arrays3() {
     let mut a = create_array();
-    //TODO modify the method called below to make the test pass.
-    // You should not change the index accessed.
-    a.at(2);
+    // Change the method called to get the element at index 2
+    assert_eq!(a.get(2).unwrap(), 2);
 }
