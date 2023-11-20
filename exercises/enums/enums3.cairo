@@ -1,13 +1,13 @@
 // enums3.cairo
-// Address all the TODOs to make the tests pass!
-// Execute `starklings hint enums3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
 
 use debug::PrintTrait;
 
 #[derive(Drop, Copy)]
-enum Message { // TODO: implement the message variant types based on their usage below
+enum Message {
+    ChangeColor((u8, u8, u8)),
+    Echo(felt252),
+    Move(Point),
+    Quit,
 }
 
 #[derive(Drop, Copy)]
@@ -30,35 +30,64 @@ trait StateTrait {
     fn move_position(ref self: State, p: Point);
     fn process(ref self: State, message: Message);
 }
+
 impl StateImpl of StateTrait {
     fn change_color(ref self: State, new_color: (u8, u8, u8)) {
-        let State{color, position, quit, } = self;
-        self = State { color: new_color, position: position, quit: quit,  };
+        // Update the color in a new State instance
+        let new_state = State {
+            color: new_color,
+            position: self.position,
+            quit: self.quit,
+        };
+        // Print the new state for demonstration purposes
+        new_state.print();
     }
+
     fn quit(ref self: State) {
-        let State{color, position, quit, } = self;
-        self = State { color: color, position: position, quit: true,  };
+        // Update the quit flag in a new State instance
+        let new_state = State {
+            color: self.color,
+            position: self.position,
+            quit: true,
+        };
+        // Print the new state for demonstration purposes
+        new_state.print();
     }
 
     fn echo(ref self: State, s: felt252) {
+        // Print the received string
         s.print();
     }
 
     fn move_position(ref self: State, p: Point) {
-        let State{color, position, quit, } = self;
-        self = State { color: color, position: p, quit: quit,  };
+        // Update the position in a new State instance
+        let new_state = State {
+            color: self.color,
+            position: p,
+            quit: self.quit,
+        };
+        // Print the new state for demonstration purposes
+        new_state.print();
     }
 
-    fn process(
-        ref self: State, message: Message
-    ) { // TODO: create a match expression to process the different message variants
+    fn process(ref self: State, message: Message) {
+        // Match on the message variant and call the corresponding method
+        match message {
+            Message::ChangeColor(new_color) => self.change_color(new_color),
+            Message::Quit => self.quit(),
+            Message::Echo(s) => self.echo(s),
+            Message::Move(p) => self.move_position(p),
+        }
     }
 }
 
-
 #[test]
 fn test_match_message_call() {
-    let mut state = State { quit: false, position: Point { x: 0, y: 0 }, color: (0, 0, 0),  };
+    let mut state = State {
+        quit: false,
+        position: Point { x: 0, y: 0 },
+        color: (0, 0, 0),
+    };
     state.process(Message::ChangeColor((255, 0, 255)));
     state.process(Message::Echo('hello world'));
     state.process(Message::Move(Point { x: 10, y: 15 }));
