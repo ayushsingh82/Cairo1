@@ -1,8 +1,3 @@
-// options3.cairo
-// Execute `starklings hint options3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
-
 use option::OptionTrait;
 use debug::PrintTrait;
 use array::ArrayTrait;
@@ -13,17 +8,16 @@ struct Student {
     courses: Array<Option<felt252>>,
 }
 
-
 fn display_grades(student: @Student, index: usize) {
     // don't mind these lines! They are required when
     // running recursive functions.
     match gas::withdraw_gas() {
-        Option::Some(_) => {},
+        Option::Some(_) => {}
         Option::None => {
             let mut data = ArrayTrait::new();
             data.append('Out of gas');
             panic(data);
-        },
+        }
     }
 
     if index == 0 {
@@ -36,15 +30,16 @@ fn display_grades(student: @Student, index: usize) {
         return ();
     }
 
-    let course = *student.courses.at(index);
+    let course = student.courses.at(index);
 
-    // TODO: Modify the following lines so that if there is a grade for the course, it is printed.
-    //       Otherwise, print "No grade".
-    // 
-    course.unwrap().print();
+    // Modify the following lines to print the grade if it exists, otherwise, print "No grade".
+    match course {
+        Option::Some(grade) => grade.print(),
+        Option::None => ("No grade").print(),
+    }
+
     display_grades(student, index + 1);
 }
-
 
 #[test]
 #[available_gas(20000000)]
@@ -58,7 +53,6 @@ fn test_all_defined() {
     let mut student = Student { name: 'Alice', courses: courses };
     display_grades(@student, 0);
 }
-
 
 #[test]
 #[available_gas(20000000)]
