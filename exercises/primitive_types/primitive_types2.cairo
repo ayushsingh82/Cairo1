@@ -1,9 +1,3 @@
-// primitive_types2.cairo
-// Fill in the rest of the line that has code missing!
-// No hints, there's no tricks, just get used to typing these :)
-
-// I AM NOT DONE
-
 use debug::PrintTrait;
 
 fn main() {
@@ -15,27 +9,27 @@ fn main() {
     if is_alphabetic(
         ref my_first_initial
     ) {
-        ('Alphabetical!').print();
+        ("Alphabetical!").print();
     } else if is_numeric(
         ref my_first_initial
     ) {
-        ('Numerical!').print();
+        ("Numerical!").print();
     } else {
-        ('Neither alphabetic nor numeric!').print();
+        ("Neither alphabetic nor numeric!").print();
     }
 
-    let // Finish this line like the example! What's your favorite short string?
+    let your_character = '7'; // Finish this line like the example! What's your favorite short string?
     // Try a letter, try a number, try a special character, try a short string!
     if is_alphabetic(
         ref your_character
     ) {
-        ('Alphabetical!').print();
+        ("Alphabetical!").print();
     } else if is_numeric(
         ref your_character
     ) {
-        ('Numerical!').print();
+        ("Numerical!").print();
     } else {
-        ('Neither alphabetic nor numeric!').print();
+        ("Neither alphabetic nor numeric!").print();
     }
 }
 
