@@ -1,12 +1,3 @@
-// starknet3.cairo
-// Joe liked Jill's work very much. He really likes how useful storage can be.
-// Now they decided to write a contract to track the number of exercises they
-// complete successfully. Jill says they can use the owner code and allow
-// only the owner to update the contract, they agree.
-// Can you help them write this contract?
-
-// I AM NOT DONE
-
 use starknet::ContractAddress;
 
 #[starknet::interface]
@@ -24,8 +15,7 @@ mod ProgressTracker {
     #[storage]
     struct Storage {
         contract_owner: ContractAddress,
-        // TODO: Set types for LegacyMap
-        progress: LegacyMap<>
+        progress: LegacyMap<ContractAddress, u16>,
     }
 
     #[constructor]
@@ -33,16 +23,20 @@ mod ProgressTracker {
         self.contract_owner.write(owner);
     }
 
-
     #[external(v0)]
     impl ProgressTrackerImpl of super::IProgressTracker<ContractState> {
         fn set_progress(
             ref self: ContractState, user: ContractAddress, new_progress: u16
-        ) { // TODO: assert owner is calling
-        // TODO: set new_progress for user,
+        ) {
+            // Assert owner is calling
+            assert(self.contract_owner.read() == get_caller_address(), "Only the owner can set progress");
+            // Set new progress for user
+            self.progress[user] = new_progress;
         }
 
-        fn get_progress(self: @ContractState, user: ContractAddress) -> u16 { // Get user progress
+        fn get_progress(self: @ContractState, user: ContractAddress) -> u16 {
+            // Get user progress
+            self.progress[user]
         }
 
         fn get_contract_owner(self: @ContractState) -> ContractAddress {
@@ -72,7 +66,7 @@ mod test {
     fn test_owner() {
         let owner: ContractAddress = 'Sensei'.try_into().unwrap();
         let dispatcher = deploy_contract();
-        assert(owner == dispatcher.get_contract_owner(), 'Mr. Sensei should be the owner');
+        assert(owner == dispatcher.get_contract_owner(), "Mr. Sensei should be the owner");
     }
 
     #[test]
@@ -89,7 +83,7 @@ mod test {
         dispatcher.set_progress('Jill'.try_into().unwrap(), 25);
 
         let joe_score = dispatcher.get_progress('Joe'.try_into().unwrap());
-        assert(joe_score == 20, 'Joe\'s progress should be 20');
+        assert(joe_score == 20, "Joe's progress should be 20");
     }
 
     #[test]
@@ -102,7 +96,7 @@ mod test {
         // Caller not owner
         starknet::testing::set_contract_address(jon_doe);
 
-        // Try to set progress, should panic to pass test!
+        // Try to set progress, should panic to pass the test!
         dispatcher.set_progress('Joe'.try_into().unwrap(), 20);
     }
 

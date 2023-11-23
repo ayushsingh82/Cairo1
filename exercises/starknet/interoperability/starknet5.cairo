@@ -1,9 +1,3 @@
-// starknet5.cairo
-// Address all the TODOs to make the tests pass!
-// Execute `starklings hint starknet5` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
-
 use core::traits::Into;
 use core::result::ResultTrait;
 use starknet::syscalls::deploy_syscall;
@@ -17,7 +11,6 @@ trait IContractA<TContractState> {
     fn set_value(ref self: TContractState, value: u128) -> bool;
     fn get_value(self: @TContractState) -> u128;
 }
-
 
 #[starknet::contract]
 mod ContractA {
@@ -43,8 +36,15 @@ mod ContractA {
     #[external(v0)]
     impl ContractAImpl of super::IContractA<ContractState> {
         fn set_value(ref self: ContractState, value: u128) -> bool {
-            // TODO: check if contract_b is enabled.
-            // If it is, set the value and return true. Otherwise, return false.
+            // Check if contract_b is enabled.
+            if IContractBDispatcher::new(self.contract_b.read()).is_enabled() {
+                // If it is, set the value and return true.
+                self.value.write(value);
+                true
+            } else {
+                // Otherwise, return false.
+                false
+            }
         }
 
         fn get_value(self: @ContractState) -> u128 {
@@ -104,7 +104,6 @@ mod test {
     use super::IContractBDispatcher;
     use super::IContractBDispatcherTrait;
 
-
     #[test]
     #[available_gas(30000000)]
     fn test_interoperability() {
@@ -126,11 +125,12 @@ mod test {
         let contract_a = IContractADispatcher { contract_address: address_a };
         let contract_b = IContractBDispatcher { contract_address: address_b };
 
-        //TODO interact with contract_b to make the test pass.
+        // Interact with contract_b to make the test pass.
+        contract_b.enable();
 
         // Tests
-        assert(contract_a.set_value(300) == true, 'Could not set value');
-        assert(contract_a.get_value() == 300, 'Value was not set');
-        assert(contract_b.is_enabled() == true, 'Contract b is not enabled');
+        assert(contract_a.set_value(300) == true, "Could not set value");
+        assert(contract_a.get_value() == 300, "Value was not set");
+        assert(contract_b.is_enabled() == true, "Contract b is not enabled");
     }
 }
