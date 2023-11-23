@@ -1,10 +1,3 @@
-// move_semantics3.cairo
-// Make me compile without adding new lines-- just changing existing lines!
-// (no lines with multiple semicolons necessary!)
-// Execute `starklings hint move_semantics3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
-
 use array::ArrayTrait;
 use array::ArrayTCloneImpl;
 use array::SpanTrait;
@@ -14,7 +7,8 @@ use debug::PrintTrait;
 fn main() {
     let arr0 = ArrayTrait::new();
 
-    let mut arr1 = fill_arr(arr0);
+    // Change the following line to clone arr0
+    let mut arr1 = fill_arr(arr0.clone());
 
     arr1.clone().print();
 
